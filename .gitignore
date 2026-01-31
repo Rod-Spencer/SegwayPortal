@@ -1,0 +1,15 @@
+**/bin/
+**/obj/
+**/packages/
+**/.vs
+**/.config
+*.log
+**/PublishProfiles/
+**/*csproj.user
+**/*.original
+**/*.data
+**/*.pdf
+**/*.zip
+**/*.7z
+**/*.bak
+**/*.http
