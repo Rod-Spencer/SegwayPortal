@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="../../../EF/Data First/Segway Context/Segway Context.csproj" />
+  <Project Path="../../Libraries/Helper/Logger Helper/Logger Helper.csproj" />
   <Project Path="ConsoleTester/ConsoleTester.csproj" />
   <Project Path="Segway Portal/Segway Portal.csproj" />
 </Solution>

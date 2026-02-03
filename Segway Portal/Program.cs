@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Segway.EF.SegwayCntxt;
+using Segway.Service.LoggerHelper;
 using Segway_Portal.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,11 +9,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+var logger = Logger_Helper.GetCurrentLogger();
+
+
 // Configure Entity Framework DbContext using the default connection name from appsettings.json
 builder.Services.AddDbContext<SegwayContext>(options =>
 {
     var defaultConnName = builder.Configuration["DefaultConnection"] ?? "Local";
+    logger.Debug($"Default Connection Name: {defaultConnName}");
+
     var connectionString = builder.Configuration.GetConnectionString(defaultConnName);
+    logger.Debug($"Connection String: {connectionString}");
 
     if (string.IsNullOrWhiteSpace(connectionString))
     {

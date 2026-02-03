@@ -1,0 +1,58 @@
+﻿@page "/Tools"
+@using Segway_Portal.Components.Components
+@using Segway.EF.SegwayCntxt
+@using System.Threading.Tasks
+@using System.Collections.Generic
+
+<h3>Downloadable Service Tools</h3>
+
+@if (String.IsNullOrEmpty(ErrorMessage) == false)
+{
+    <div class="alert alert-danger" role="alert">
+        @ErrorMessage
+    </div>
+}
+else
+{
+    @if (String.IsNullOrEmpty(WarningMessage) == false)
+    {
+        <div class="alert alert-warning" role="alert">
+            @WarningMessage
+        </div>
+    }
+
+    <button class="btn btn-success fa fa-plus" @onclick="ShowPopup"> Add a new tool</button>
+
+    <table class="table" style="width:70%; margin:0 auto;">
+        <thead>
+            <tr>
+                <th class="wide300">Display Name</th>
+                <th class="wide300">Version</th>
+                <th class="wide200"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if ((PortalTools != null) && (PortalTools.Count > 0))
+            {
+                foreach (var tool in PortalTools)
+                {
+                    <tr>
+                        <td class="wide300">@tool.DisplayName</td>
+                        <td class="wide300">@tool.Version</td>
+                        <td class="wide200"></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <Portal_Tool @ref="PortalToolComponent"
+                 PortalTool="@PortalTool"
+                 PortalStates="@PortalToolStates"
+                 InstallerTypes="@InstallerTypes"
+                 PortalToolTypes="@PortalToolTypes"
+                 OnPortalToolChanged="HandlePortalToolChanged"
+                 OnShowPortalToolPageChanged="HandleShowPortalToolPageChanged" />
+}
+
+

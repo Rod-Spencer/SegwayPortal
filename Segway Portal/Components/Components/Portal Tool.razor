@@ -1,0 +1,35 @@
+﻿@if (ShowPortalToolPage == true)
+{
+    <!-- Backdrop -->
+    <div class="modal-backdrop fade show" style="position:fixed; inset:0; z-index:1040;"></div>
+
+    <!-- Modal dialog -->
+    <div class="modal d-block" tabindex="-1" role="dialog" style="z-index:1050;">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Tool</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Display Name</label>
+                        <InputText class="form-control" @bind-Value="PortalTool!.DisplayName" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Version</label>
+                        <InputText class="form-control" @bind-Value="PortalTool!.Version" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">File Name</label>
+                        <InputText class="form-control" @bind-Value="PortalTool!.FileName" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="ClosePopup">Cancel</button>
+                    <button class="btn btn-primary" @onclick="SaveTool">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\EF\Data First\Segway Context\Segway Context.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Helper\Logger Helper\Logger Helper.csproj" />
   </ItemGroup>
 
 </Project>
