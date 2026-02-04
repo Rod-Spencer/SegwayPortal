@@ -12,6 +12,10 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
+                        <label class="form-label">File Name</label>
+                        <InputFile class="form-control" OnChange="HandleFileSelected" />
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label">Display Name</label>
                         <InputText class="form-control" @bind-Value="PortalTool!.DisplayName" />
                     </div>
@@ -20,8 +24,43 @@
                         <InputText class="form-control" @bind-Value="PortalTool!.Version" />
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">File Name</label>
-                        <InputText class="form-control" @bind-Value="PortalTool!.FileName" />
+                        <label class="form-label">Installer Type</label>
+                        <InputSelect class="form-select" @bind-Value="PortalTool!.InstallerTypeId" TValue="Guid?" >
+                            <option value="@Guid.Empty">Select installer type</option>
+                            @if (InstallerTypes is not null)
+                            {
+                                @foreach (var installerType in InstallerTypes)
+                                {
+                                    <option value="@installerType.Id">@installerType.Description</option>
+                                }
+                            }
+                        </InputSelect>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Portal Tool State</label>
+                        <InputSelect class="form-select" @bind-Value="PortalTool!.ServiceToolStateId" TValue="Guid?">
+                            <option value="">Select Portal Tool State</option>
+                            @if (PortalStates is not null)
+                            {
+                                @foreach (var state in PortalStates)
+                                {
+                                    <option value="@state.Id">@state.Description</option>
+                                }
+                            }
+                        </InputSelect>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tool Types</label>
+                        <InputSelect class="form-select" @bind-Value="PortalTool!.ServiceToolTypeId" TValue="Guid?">
+                            <option value="">Select Portal Tool Types</option>
+                            @if (PortalToolTypes is not null)
+                            {
+                                @foreach (var tooltype in PortalToolTypes)
+                                {
+                                    <option value="@tooltype.Id">@tooltype.Description</option>
+                                }
+                            }
+                        </InputSelect>
                     </div>
                 </div>
                 <div class="modal-footer">

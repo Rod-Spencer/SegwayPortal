@@ -1,4 +1,5 @@
 ﻿@page "/Tools"
+@rendermode InteractiveServer
 @using Segway_Portal.Components.Components
 @using Segway.EF.SegwayCntxt
 @using System.Threading.Tasks
@@ -21,14 +22,18 @@ else
         </div>
     }
 
-    <button class="btn btn-success fa fa-plus" @onclick="ShowPopup"> Add a new tool</button>
+    <button type="button" class="btn btn-success fa fa-plus" @onclick="ShowPopup"> Add a new tool</button>
 
     <table class="table" style="width:70%; margin:0 auto;">
         <thead>
             <tr>
-                <th class="wide300">Display Name</th>
-                <th class="wide300">Version</th>
-                <th class="wide200"></th>
+                <th class="wide33p">Display Name</th>
+                <th class="wide20p">Version</th>
+                <th class="wide20p">State</th>
+                <th class="wide40"></th>
+                <th class="wide40"></th>
+                <th class="wide40"></th>
+                <th class="wide40"></th>
             </tr>
         </thead>
         <tbody>
@@ -36,10 +41,16 @@ else
             {
                 foreach (var tool in PortalTools)
                 {
+                    var state = PortalToolStates!.Find(s => s.Id == tool.ServiceToolStateId);
+                    var toolStateColor = $"{state?.Description?.Replace(" ", "-")}-Color";
                     <tr>
-                        <td class="wide300">@tool.DisplayName</td>
-                        <td class="wide300">@tool.Version</td>
-                        <td class="wide200"></td>
+                        <td class="wide33p">@tool.DisplayName</td>
+                        <td class="wide20p">@tool.Version</td>
+                        <td class="wide20p @toolStateColor">@state?.Description</td>
+                        <td class="wide40" title="Download this tool"><a class="btn btn-warning btn-lg fa fa-solid fa-download fa-lg" @onclick="() => DownloadTool(tool.Id)" /></td>
+                        <td class="wide40" title="Edit this tool"><a class="btn btn-primary btn-lg fa fa-solid fa-pencil fa-lg" @onclick="() => EditTool(tool.Id)" /></td>
+                        <td class="wide40" title="Delete this tool"><a class="btn btn-danger btn-lg fa fa-solid fa-trash fa-lg" @onclick="() => DeleteTool(tool.Id)" /></td>
+                        <td class="wide40" title="Add a new tool based on this one"><a class="btn btn-success btn-lg fa fa-solid fa-plus fa-lg" @onclick="() => AddToolBasedOn(tool.Id)" /></td>
                     </tr>
                 }
             }
@@ -48,10 +59,12 @@ else
 
     <Portal_Tool @ref="PortalToolComponent"
                  PortalTool="@PortalTool"
+                 PortalData="@PortalData"
                  PortalStates="@PortalToolStates"
                  InstallerTypes="@InstallerTypes"
                  PortalToolTypes="@PortalToolTypes"
                  OnPortalToolChanged="HandlePortalToolChanged"
+                 OnPortalDataChanged="HandlerPortalDataChanged"
                  OnShowPortalToolPageChanged="HandleShowPortalToolPageChanged" />
 }
 
