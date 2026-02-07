@@ -1,4 +1,5 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using Microsoft.AspNetCore.Components.Authorization
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">Segway Portal</a>
     </div>
@@ -12,14 +13,20 @@
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
             </NavLink>
-            <NavLink class="nav-link" href="/Login" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Login
-            </NavLink>
-            <form action="/account/logout" method="post">
-                <button type="submit" class="nav-link" style="border: none; background: none; cursor: pointer; text-align: left; width: 100%;">
-                    <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Logout
-                </button>
-            </form>
+            <AuthorizeView>
+                <NotAuthorized>
+                    <NavLink class="nav-link" href="/Login" Match="NavLinkMatch.All">
+                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Login
+                    </NavLink>
+                </NotAuthorized>
+                <Authorized>
+                    <form action="/account/logout" method="post">
+                        <button type="submit" class="nav-link" style="border: none; background: none; cursor: pointer; text-align: left; width: 100%;">
+                            <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Logout
+                        </button>
+                    </form>
+                </Authorized>
+            </AuthorizeView>
             <NavLink class="nav-link" href="/Tools" Match="NavLinkMatch.All">
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Downloadable Tools
             </NavLink>
