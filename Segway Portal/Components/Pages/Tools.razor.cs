@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using Segway.EF.SegwayCntxt;
 using Segway_Portal.Components.Components;
 
@@ -23,6 +24,10 @@ namespace Segway_Portal.Components.Pages
 
         [Inject]
         public SegwayContext? SegDB { get; set; }
+
+        [Inject]
+        private IJSRuntime JS { get; set; } = null!;
+
 
         #endregion Injections
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -148,8 +153,8 @@ namespace Segway_Portal.Components.Pages
                     if (PortalData.Id == Guid.Empty)
                     {
                         PortalData.Id = Guid.NewGuid();
-                        PortalTool?.FileDataId = PortalData?.Id;
-                        SegDB?.PortalServiceToolData.Add(PortalData);
+                        PortalTool!.FileDataId = PortalData!.Id;
+                        SegDB?.PortalServiceToolData.Add(PortalData!);
                     }
                     else
                     {
@@ -264,14 +269,53 @@ namespace Segway_Portal.Components.Pages
             }
         }
 
-        private async Task DownloadTool(Guid toolId)
+        //private async Task DownloadTool(Guid toolId)
+        //{
+        //    PortalTool = PortalTools?.FirstOrDefault(x => x.Id == toolId);
+        //    await Task.Yield();
+        //    PortalToolComponent?.ShowPopup();
+        //    StateHasChanged();
+        //}
+
+        private async Task DownloadFileFromBytesAsync(string fileName, byte[] bytes, string contentType = "application/octet-stream")
         {
-            PortalTool = PortalTools?.FirstOrDefault(x => x.Id == toolId);
-            await Task.Yield();
-            PortalToolComponent?.ShowPopup();
-            StateHasChanged();
+            var base64 = Convert.ToBase64String(bytes);
+            // simple data-URL download
+            await JS.InvokeVoidAsync("blazorDownloadFile", fileName, base64, contentType);
         }
 
+        // Example usage:
+        private async Task DownloadTool(Guid toolId)
+        {
+            // Retrieve bytes for the tool (example: `PortalTool.FileData` or load from SegDB)
+            var tool = PortalTools?.FirstOrDefault(t => t.Id == toolId);
+            if (tool == null)
+            {
+                ErrorMessage = "Tool not found.";
+                return;
+            }
+            if (String.IsNullOrEmpty(tool.FileName) == true)
+            {
+                ErrorMessage = "Tool File Name is NULL or empty.";
+                return;
+            }
+
+            var pData = SegDB?.PortalServiceToolData.FirstOrDefault(x => x.Id == tool.FileDataId);
+            if (pData == null)
+            {
+                ErrorMessage = "File data not found.";
+                return;
+            }
+
+            if ((pData.FileData == null) || (pData.FileData.Length == 0))
+            {
+                ErrorMessage = "Tool File data is NULL or empty.";
+                return;
+            }
+
+            byte[] fileBytes = pData.FileData;
+            await DownloadFileFromBytesAsync(tool.FileName, fileBytes);
+        }
 
         #endregion
         ////////////////////////////////////////////////////////////////////////////////////////////////////

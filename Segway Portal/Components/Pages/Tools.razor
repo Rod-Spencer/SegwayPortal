@@ -1,9 +1,14 @@
 ﻿@page "/Tools"
 @rendermode InteractiveServer
+@attribute [Authorize]
+
+@using Microsoft.AspNetCore.Authorization
 @using Segway_Portal.Components.Components
 @using Segway.EF.SegwayCntxt
 @using System.Threading.Tasks
 @using System.Collections.Generic
+
+<PageTitle>Downloadable Tools</PageTitle>
 
 <h3>Downloadable Service Tools</h3>
 

@@ -30,3 +30,15 @@ Console.WriteLine("--- Portal Tool Types ---");
 var ptt = db.PortalToolTypes.OrderBy(x => x.Description).ToList();
 ptt.ForEach(x => Console.WriteLine($"ID: {x.Id}, Name: {x.Description}"));
 
+Console.WriteLine("--- Portal Users ---");
+var pu = db.PortalUsers.OrderBy(x => x.User_Name).ToList();
+pu.ForEach(x => Console.WriteLine($"ID: {x.ID}, Name: {x.User_Name}"));
+
+Console.WriteLine("--- Portal Users Access ---");
+var pua = db.PortalUsersAccess.OrderBy(x => x.Description).ToList();
+pua.ForEach(x => Console.WriteLine($"ID: {x.ID}, Name: {x.Description}"));
+
+Console.WriteLine("--- {Portal Users - Find me ---");
+var me = db.PortalUsers.FirstOrDefault(x => x.User_Name == "rod.spencer");
+if (me is not null) Console.WriteLine($"ID: {me.ID}, Name: {me.User_Name}");
+

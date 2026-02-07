@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
-using Segway.EF.SegwayCntxt;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Components;
 using Segway_Portal.Models;
+using Segway_Portal.Services;
+using System.Security.Claims;
 
 namespace Segway_Portal.Components.Pages
 {
@@ -20,6 +22,17 @@ namespace Segway_Portal.Components.Pages
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         #region Injections
+
+        [Inject]
+        public UserService_Interface? UserService { get; set; }
+
+        [Inject]
+        public NavigationManager? Nav { get; set; }
+
+        [Inject]
+        public IHttpContextAccessor? HttpContextAccessor { get; set; }
+
+
         #endregion Injections
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -36,6 +49,13 @@ namespace Segway_Portal.Components.Pages
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         #region Public Properties
+
+        public String? UserName { get; set; }
+
+        public String? Password { get; set; }
+
+        public Boolean RememberMe { get; set; }
+
         #endregion Public Properties
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -70,37 +90,50 @@ namespace Segway_Portal.Components.Pages
         private async Task HandleLogin()
         {
             error = null;
+            if (string.IsNullOrEmpty(UserName) || string.IsNullOrEmpty(Password))
+            {
+                error = "Please enter both username and password.";
+                return;
+            }
 
-            using var segDB = new SegwayContext();
-            var user = segDB.ServiceUsers.FirstOrDefault(u => u.UserName == model.Username);
+            if (UserService is null)
+            {
+                error = "User service is not available.";
+                return;
+            }
+
+            var user = await UserService.ValidateUserAsync(UserName, Password);
+
             if (user == null)
             {
                 error = "Invalid username or password.";
                 return;
             }
 
-            if (user.UserPassword != model.Password)
+            if (HttpContextAccessor?.HttpContext is null)
             {
-                error = "Invalid username or password.";
+                error = "HTTP context is not available.";
                 return;
             }
 
-            //var response = await Http.PostAsJsonAsync("/login", model);
+            if (Nav is null)
+            {
+                error = "Navigation service is not available.";
+                return;
+            }
 
-            //if (response.IsSuccessStatusCode)
-            //{
-            //    // Force a full navigation so the authentication cookie is picked up by the circuit
-            //    Navigation.NavigateTo("/", true);
-            //    return;
-            //}
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.User_Name),
+                new Claim("UserId", user.ID.ToString())
+            };
 
-            //if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-            //{
-            //    error = "Invalid username or password.";
-            //    return;
-            //}
+            var identity = new ClaimsIdentity(claims, "Cookies");
+            var principal = new ClaimsPrincipal(identity);
 
-            error = "Login failed.";
+            await HttpContextAccessor.HttpContext.SignInAsync("Cookies", principal);
+
+            Nav.NavigateTo("/Tools");
         }
 
 
