@@ -3,6 +3,7 @@
 @attribute [Authorize]
 
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
 @using Segway_Portal.Components.Components
 @using Segway.EF.SegwayCntxt
 @using System.Threading.Tasks
@@ -27,7 +28,11 @@ else
         </div>
     }
 
-    <button type="button" class="btn btn-success fa fa-plus" @onclick="ShowPopup"> Add a new tool</button>
+    <AuthorizeView Roles="Master">
+        <Authorized>
+            <button type="button" class="btn btn-success fa fa-plus" @onclick="ShowPopup"> Add a new tool</button>
+        </Authorized>
+    </AuthorizeView>
 
     <table class="table" style="width:70%; margin:0 auto;">
         <thead>
@@ -53,9 +58,18 @@ else
                         <td class="wide20p">@tool.Version</td>
                         <td class="wide20p @toolStateColor">@state?.Description</td>
                         <td class="wide40" title="Download this tool"><a class="btn btn-warning btn-lg fa fa-solid fa-download fa-lg" @onclick="() => DownloadTool(tool.Id)" /></td>
-                        <td class="wide40" title="Edit this tool"><a class="btn btn-primary btn-lg fa fa-solid fa-pencil fa-lg" @onclick="() => EditTool(tool.Id)" /></td>
-                        <td class="wide40" title="Delete this tool"><a class="btn btn-danger btn-lg fa fa-solid fa-trash fa-lg" @onclick="() => DeleteTool(tool.Id)" /></td>
-                        <td class="wide40" title="Add a new tool based on this one"><a class="btn btn-success btn-lg fa fa-solid fa-plus fa-lg" @onclick="() => AddToolBasedOn(tool.Id)" /></td>
+                        <AuthorizeView Roles="Master">
+                            <Authorized>
+                                <td class="wide40" title="Edit this tool"><a class="btn btn-primary btn-lg fa fa-solid fa-pencil fa-lg" @onclick="() => EditTool(tool.Id)" /></td>
+                                <td class="wide40" title="Delete this tool"><a class="btn btn-danger btn-lg fa fa-solid fa-trash fa-lg" @onclick="() => DeleteTool(tool.Id)" /></td>
+                                <td class="wide40" title="Add a new tool based on this one"><a class="btn btn-success btn-lg fa fa-solid fa-plus fa-lg" @onclick="() => AddToolBasedOn(tool.Id)" /></td>
+                            </Authorized>
+                            <NotAuthorized>
+                                <td class="wide40"></td>
+                                <td class="wide40"></td>
+                                <td class="wide40"></td>
+                            </NotAuthorized>
+                        </AuthorizeView>
                     </tr>
                 }
             }

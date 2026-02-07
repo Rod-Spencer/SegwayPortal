@@ -41,4 +41,12 @@ public class UserService : UserService_Interface
 
         return user;
     }
+
+    public async Task<String?> UserAccessAsync(Guid ID)
+    {
+        var access = SegDB?.PortalUsersAccess?.FirstOrDefault(x => x.ID == ID);
+        if (access is null) return null;
+        return access.Description;
+    }
+
 }

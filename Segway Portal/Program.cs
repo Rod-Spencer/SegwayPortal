@@ -44,6 +44,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 builder.Services.AddScoped<UserService_Interface, UserService>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddCascadingAuthenticationState();
 
 var app = builder.Build();
 
@@ -81,9 +82,17 @@ app.MapPost("/account/login", async (HttpContext context, UserService_Interface 
         return;
     }
 
+    String? access = await userService.UserAccessAsync(user.User_Access_Level);
+    //if (access == null)
+    //{
+    //    context.Response.Redirect("/login?error=access");
+    //    return;
+    //}
+
     var claims = new List<Claim>
     {
         new Claim(ClaimTypes.Name, user.User_Name),
+        new Claim(ClaimTypes.Role, access ?? "Basic"),
         new Claim("UserId", user.ID.ToString())
     };
 
